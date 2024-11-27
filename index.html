@@ -1,0 +1,183 @@
+<!DOCTYPE HTML>
+<html lang="en">
+	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+		<meta charset="UTF-8">
+		<title>Second anniversary of love</title>
+		<link rel="stylesheet" type="text/css" href="./css/format.css">
+		<style>
+			#musicControls {
+				position: fixed;
+				top: 20px;
+				right: 20px;
+				z-index: 1000;
+			}
+			
+			.music-btn {
+				background-color: rgba(255, 255, 255, 0.8);
+				border: none;
+				padding: 8px 15px;
+				margin: 0 5px;
+				border-radius: 15px;
+				cursor: pointer;
+				transition: all 0.3s ease;
+			}
+			
+			.music-btn:hover {
+				background-color: rgba(255, 255, 255, 1);
+				transform: scale(1.05);
+			}
+
+			#imgTxt {
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%);
+				text-align: center;
+				width: 100%;
+			}
+
+			#img {
+				max-width: 300px; /* Fixed maximum width */
+				max-height: 300px; /* Fixed maximum height */
+				width: auto;
+				height: auto;
+				margin: 10px auto;
+				display: block;
+			}
+
+			#Txt {
+				display: block;
+				text-align: center;
+				margin: 10px 0;
+				color: white;
+				font-size: 1.2em;
+			}
+
+			@media (max-width: 768px) {
+				#img {
+					max-width: 250px; /* Slightly smaller for mobile */
+					max-height: 250px;
+				}
+
+				#Txt {
+					font-size: 1em;
+				}
+			}
+		</style>
+	</head>
+
+	<body style="margin:0px">
+		<audio id="bgMusic" loop>
+			<source src="music/music.mp3" type="audio/mpeg">
+			Your browser does not support the audio.
+		</audio>
+
+		<div id="musicControls">
+			<button class="music-btn" id="playPauseBtn" onclick="togglePlay()">Play Music</button>
+			<button class="music-btn" id="muteBtn" onclick="toggleMute()">Unmute</button>
+		</div>
+
+		<canvas></canvas>
+		<div id="imgTxt">
+			<span id="Txt"></span>
+			<span id="tmp"></span>
+			<img id="img" src="" alt="Anniversary memories">
+		</div>
+
+		<div id="heartTxt">
+			<div id="heart">
+				<button id="button" onclick="play()"></button>
+			</div>
+		</div>
+
+		<div id="content">
+			<div id="together">We've been in love for</div>
+			<div id="timer">
+				<span id="d"></span> Days 
+				<span id="h"></span> Hours 
+				<span id="m"></span> Minutes 
+				<span id="s"></span> Seconds
+			</div>
+		</div>
+		
+		<div id="typeDiv">
+			<div id="txt1"></div>
+			<div id="txt2"></div>
+		</div>
+
+		<script>
+			const music = document.getElementById('bgMusic');
+			const playPauseBtn = document.getElementById('playPauseBtn');
+			const muteBtn = document.getElementById('muteBtn');
+			let isPlaying = false;
+
+			function togglePlay() {
+				if (!isPlaying) {
+					music.play().then(() => {
+						isPlaying = true;
+						playPauseBtn.textContent = 'Pause Music';
+					}).catch(error => {
+						console.log("Audio play failed:", error);
+					});
+				} else {
+					music.pause();
+					isPlaying = false;
+					playPauseBtn.textContent = 'Play Music';
+				}
+			}
+
+			function toggleMute() {
+				music.muted = !music.muted;
+				muteBtn.textContent = music.muted ? 'Unmute' : 'Mute';
+			}
+
+			document.addEventListener('click', function initAudio() {
+				if (!isPlaying) {
+					music.play().then(() => {
+						isPlaying = true;
+						playPauseBtn.textContent = 'Pause Music';
+					}).catch(error => {
+						console.log("Audio play failed:", error);
+					});
+				}
+				document.removeEventListener('click', initAudio);
+			}, { once: true });
+
+			var ok = 0;
+			var flag = 1;
+			var myImage = document.getElementById("img");
+			var myTxt = document.getElementById("Txt");
+			var imageArray = ["pic/pic1.png", "pic/pic2.png", "pic/pic3.png", "pic/pic4.png", 
+							 "pic/pic5.png", "pic/pic6.png", "pic/pic7.png", "pic/pic8.png", 
+							 "pic/pic9.png", "pic/pic10.png", "pic/pic11.png", "pic/pic12.png", 
+							 "pic/pic13.png", "pic/pic14.png", "pic/pic15.png"];
+			var imageIndex = 0;
+			var txtArray = ["Our first anniversary dinner, we went to the aquarium then the melting pot. Loved every single moment being with my lover", "PIERCE THE VEIL!!", 
+						   "My first time flying, I'm glad I got to experience the moment with you :)", "You justed looked absolutely stunning, I had to add this photo", 
+						   "Our first escape room together, it stood no chance!", "The day of your birthday party, I was soo happy all of our friends were there to celebrate your birthday", 
+						   "Trip to the Botanical Gardens, can't believe we had those organic drinks they tasted awful. The bee garden was my favorite", 
+						   "My beautiful soldier", "First time at the fair together, and trying the Idaho Potatoe WORTH IT", 
+						   "Sadely we missed the sunset, but your beauty shined an array of light", "Farmstead date with a thrid wheel(JK!), sadley no good pulls from the rocks", 
+						   "Picking flowers for eachother, and I'm so glad you and my sister bonded", "We fucking locked in and made the best pumpkins", 
+						   "Fine shyte a lil freaky ", "Domain Expansion: Bagging a furry"];
+			var len = imageArray.length;
+			var t = 0;
+
+			// Preload images
+			function preloadImages() {
+				for (let i = 0; i < imageArray.length; i++) {
+					const img = new Image();
+					img.src = imageArray[i];
+				}
+			}
+
+			window.onload = preloadImages;
+		</script>
+
+		<script type="text/javascript" src="./js/typeWriter.js"></script>
+		<script type="text/javascript" src="./js/date.js"></script>
+		<script type="text/javascript" src="./js/stars.js"></script>
+		<script type="text/javascript" src="./js/playImg.js"></script>
+	</body>
+</html>
