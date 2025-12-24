@@ -1,183 +1,832 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-		<meta charset="UTF-8">
-		<title>Second anniversary of love</title>
-		<link rel="stylesheet" type="text/css" href="./css/format.css">
-		<style>
-			#musicControls {
-				position: fixed;
-				top: 20px;
-				right: 20px;
-				z-index: 1000;
-			}
-			
-			.music-btn {
-				background-color: rgba(255, 255, 255, 0.8);
-				border: none;
-				padding: 8px 15px;
-				margin: 0 5px;
-				border-radius: 15px;
-				cursor: pointer;
-				transition: all 0.3s ease;
-			}
-			
-			.music-btn:hover {
-				background-color: rgba(255, 255, 255, 1);
-				transform: scale(1.05);
-			}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hector & Kaylee | Our Love Story</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- Background Music -->
+    <audio id="bgMusic" loop>
+        <source src="music/music.mp3" type="audio/mpeg">
+    </audio>
 
-			#imgTxt {
-				position: absolute;
-				top: 50%;
-				left: 50%;
-				transform: translate(-50%, -50%);
-				text-align: center;
-				width: 100%;
-			}
+    <!-- Navigation -->
+    <nav class="main-nav" id="mainNav">
+        <a href="#hero" class="nav-logo">
+            <span class="logo-ampersand">H</span> & <span class="logo-ampersand">K</span>
+        </a>
+        <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        <ul class="nav-links" id="navLinks">
+            <li><a href="#hero" class="nav-link active">Home</a></li>
+            <li><a href="#story" class="nav-link">Our Story</a></li>
+            <li><a href="#gallery" class="nav-link">Gallery</a></li>
+            <li><a href="#stats" class="nav-link">Stats</a></li>
+            <li><a href="#music" class="nav-link">Our Songs</a></li>
+            <li><a href="#upload" class="nav-link">Add Photos</a></li>
+            <li><a href="#favorites" class="nav-link">Favorites</a></li>
+            <!-- Wedding Mode Links (hidden by default) -->
+            <li class="wedding-only" style="display: none;"><a href="#rsvp" class="nav-link">RSVP</a></li>
+            <li class="wedding-only" style="display: none;"><a href="#registry" class="nav-link">Registry</a></li>
+        </ul>
+        <button class="music-toggle" id="musicToggle" aria-label="Toggle music">
+            <svg class="music-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 18V5l12-2v13"></path>
+                <circle cx="6" cy="18" r="3"></circle>
+                <circle cx="18" cy="16" r="3"></circle>
+            </svg>
+            <span class="music-off-line"></span>
+        </button>
+    </nav>
 
-			#img {
-				max-width: 300px; /* Fixed maximum width */
-				max-height: 300px; /* Fixed maximum height */
-				width: auto;
-				height: auto;
-				margin: 10px auto;
-				display: block;
-			}
+    <!-- Hero Section -->
+    <section class="hero" id="hero">
+        <div class="hero-bg">
+            <canvas id="heartsCanvas"></canvas>
+        </div>
+        <div class="hero-content">
+            <p class="hero-date">Since November 27, 2022</p>
+            <h1 class="hero-title">
+                <span class="title-name" id="heroName1">Hector</span>
+                <span class="title-ampersand">&</span>
+                <span class="title-name" id="heroName2">Kaylee</span>
+            </h1>
+            <p class="hero-subtitle">A love story written in the stars</p>
 
-			#Txt {
-				display: block;
-				text-align: center;
-				margin: 10px 0;
-				color: white;
-				font-size: 1.2em;
-			}
+            <div class="love-timer" id="loveTimer">
+                <div class="timer-unit">
+                    <span class="timer-number" id="timerDays">0</span>
+                    <span class="timer-label">Days</span>
+                </div>
+                <span class="timer-separator">:</span>
+                <div class="timer-unit">
+                    <span class="timer-number" id="timerHours">00</span>
+                    <span class="timer-label">Hours</span>
+                </div>
+                <span class="timer-separator">:</span>
+                <div class="timer-unit">
+                    <span class="timer-number" id="timerMinutes">00</span>
+                    <span class="timer-label">Minutes</span>
+                </div>
+                <span class="timer-separator">:</span>
+                <div class="timer-unit">
+                    <span class="timer-number" id="timerSeconds">00</span>
+                    <span class="timer-label">Seconds</span>
+                </div>
+            </div>
 
-			@media (max-width: 768px) {
-				#img {
-					max-width: 250px; /* Slightly smaller for mobile */
-					max-height: 250px;
-				}
+            <a href="#story" class="scroll-indicator">
+                <span>Explore Our Story</span>
+                <div class="scroll-arrow"></div>
+            </a>
+        </div>
+    </section>
 
-				#Txt {
-					font-size: 1em;
-				}
-			}
-		</style>
-	</head>
+    <!-- Our Story Timeline -->
+    <section class="story-section" id="story">
+        <div class="container">
+            <header class="section-header">
+                <span class="section-tag">Our Journey</span>
+                <h2 class="section-title">Our Story</h2>
+                <p class="section-subtitle">Every moment with you is a chapter I never want to end</p>
+            </header>
 
-	<body style="margin:0px">
-		<audio id="bgMusic" loop>
-			<source src="music/music.mp3" type="audio/mpeg">
-			Your browser does not support the audio.
-		</audio>
+            <div class="timeline">
+                <!-- 2022 -->
+                <div class="timeline-item" data-year="2022">
+                    <div class="timeline-marker">
+                        <span class="timeline-year">2022</span>
+                    </div>
+                    <div class="timeline-content">
+                        <div class="timeline-card">
+                            <span class="card-date">November 27</span>
+                            <h3 class="card-title">The Beginning</h3>
+                            <p class="card-text">The day our story began. From that first moment, I knew there was something special about you. Little did we know this was just the start of an incredible journey together.</p>
+                            <div class="card-image">
+                                <img src="pic/pic1.png" alt="The Beginning" loading="lazy">
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-		<div id="musicControls">
-			<button class="music-btn" id="playPauseBtn" onclick="togglePlay()">Play Music</button>
-			<button class="music-btn" id="muteBtn" onclick="toggleMute()">Unmute</button>
-		</div>
+                <!-- 2023 -->
+                <div class="timeline-item" data-year="2023">
+                    <div class="timeline-marker">
+                        <span class="timeline-year">2023</span>
+                    </div>
+                    <div class="timeline-content">
+                        <div class="timeline-card">
+                            <span class="card-date">First Anniversary</span>
+                            <h3 class="card-title">Growing Together</h3>
+                            <p class="card-text">Our first anniversary dinner at the aquarium, then The Melting Pot. Every single moment with you was perfect. We took on escape rooms, went to concerts, and fell deeper in love.</p>
+                            <div class="card-image">
+                                <img src="pic/pic2.png" alt="Growing Together" loading="lazy">
+                            </div>
+                        </div>
+                        <div class="timeline-card">
+                            <span class="card-date">Adventures</span>
+                            <h3 class="card-title">Pierce The Veil</h3>
+                            <p class="card-text">PIERCE THE VEIL!! Our first concert together. The energy, the music, the memories - all made perfect because I was with you.</p>
+                            <div class="card-image">
+                                <img src="pic/pic3.png" alt="Pierce The Veil" loading="lazy">
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-		<canvas></canvas>
-		<div id="imgTxt">
-			<span id="Txt"></span>
-			<span id="tmp"></span>
-			<img id="img" src="" alt="Anniversary memories">
-		</div>
+                <!-- 2024 -->
+                <div class="timeline-item" data-year="2024">
+                    <div class="timeline-marker">
+                        <span class="timeline-year">2024</span>
+                    </div>
+                    <div class="timeline-content">
+                        <div class="timeline-card">
+                            <span class="card-date">Taking Flight</span>
+                            <h3 class="card-title">New Adventures</h3>
+                            <p class="card-text">My first time flying - I'm so glad I got to experience that moment with you. We explored botanical gardens (those organic drinks were awful though), hit up the fair for Idaho Potatoes (WORTH IT), and created countless memories.</p>
+                            <div class="card-image">
+                                <img src="pic/pic4.png" alt="New Adventures" loading="lazy">
+                            </div>
+                        </div>
+                        <div class="timeline-card">
+                            <span class="card-date">Special Moments</span>
+                            <h3 class="card-title">Deeper Connections</h3>
+                            <p class="card-text">Your birthday party surrounded by friends, farmstead dates, picking flowers together, and watching you bond with my sister. Every moment made me love you more.</p>
+                            <div class="card-image">
+                                <img src="pic/pic7.png" alt="Deeper Connections" loading="lazy">
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-		<div id="heartTxt">
-			<div id="heart">
-				<button id="button" onclick="play()"></button>
-			</div>
-		</div>
+                <!-- 2025 -->
+                <div class="timeline-item" data-year="2025">
+                    <div class="timeline-marker">
+                        <span class="timeline-year">2025</span>
+                    </div>
+                    <div class="timeline-content">
+                        <div class="timeline-card">
+                            <span class="card-date">Year Three & Beyond</span>
+                            <h3 class="card-title">Forever Begins</h3>
+                            <p class="card-text">Three years of love, laughter, and adventure. Every day with you feels like coming home. Here's to many more years of making memories together.</p>
+                            <div class="card-image">
+                                <img src="pic/pic15.png" alt="Forever Begins" loading="lazy">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-		<div id="content">
-			<div id="together">We've been in love for</div>
-			<div id="timer">
-				<span id="d"></span> Days 
-				<span id="h"></span> Hours 
-				<span id="m"></span> Minutes 
-				<span id="s"></span> Seconds
-			</div>
-		</div>
-		
-		<div id="typeDiv">
-			<div id="txt1"></div>
-			<div id="txt2"></div>
-		</div>
+    <!-- Photo Gallery -->
+    <section class="gallery-section" id="gallery">
+        <div class="container">
+            <header class="section-header">
+                <span class="section-tag">Memories</span>
+                <h2 class="section-title">Our Gallery</h2>
+                <p class="section-subtitle">Captured moments that tell our story</p>
+            </header>
 
-		<script>
-			const music = document.getElementById('bgMusic');
-			const playPauseBtn = document.getElementById('playPauseBtn');
-			const muteBtn = document.getElementById('muteBtn');
-			let isPlaying = false;
+            <div class="gallery-filters">
+                <button class="filter-btn active" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="2022">2022</button>
+                <button class="filter-btn" data-filter="2023">2023</button>
+                <button class="filter-btn" data-filter="2024">2024</button>
+                <button class="filter-btn" data-filter="2025">2025</button>
+            </div>
 
-			function togglePlay() {
-				if (!isPlaying) {
-					music.play().then(() => {
-						isPlaying = true;
-						playPauseBtn.textContent = 'Pause Music';
-					}).catch(error => {
-						console.log("Audio play failed:", error);
-					});
-				} else {
-					music.pause();
-					isPlaying = false;
-					playPauseBtn.textContent = 'Play Music';
-				}
-			}
+            <div class="gallery-grid" id="galleryGrid">
+                <div class="gallery-item" data-year="2022" data-index="0">
+                    <img src="pic/pic1.png" alt="First anniversary dinner" loading="lazy">
+                    <div class="gallery-overlay">
+                        <p>Our first anniversary dinner, we went to the aquarium then the melting pot. Loved every single moment being with my lover</p>
+                    </div>
+                </div>
+                <div class="gallery-item" data-year="2023" data-index="1">
+                    <img src="pic/pic2.png" alt="Pierce The Veil concert" loading="lazy">
+                    <div class="gallery-overlay">
+                        <p>PIERCE THE VEIL!!</p>
+                    </div>
+                </div>
+                <div class="gallery-item" data-year="2023" data-index="2">
+                    <img src="pic/pic3.png" alt="First flight" loading="lazy">
+                    <div class="gallery-overlay">
+                        <p>My first time flying, I'm glad I got to experience the moment with you :)</p>
+                    </div>
+                </div>
+                <div class="gallery-item" data-year="2023" data-index="3">
+                    <img src="pic/pic4.png" alt="Stunning photo" loading="lazy">
+                    <div class="gallery-overlay">
+                        <p>You just looked absolutely stunning, I had to add this photo</p>
+                    </div>
+                </div>
+                <div class="gallery-item" data-year="2023" data-index="4">
+                    <img src="pic/pic5.png" alt="Escape room" loading="lazy">
+                    <div class="gallery-overlay">
+                        <p>Our first escape room together, it stood no chance!</p>
+                    </div>
+                </div>
+                <div class="gallery-item" data-year="2024" data-index="5">
+                    <img src="pic/pic6.png" alt="Birthday party" loading="lazy">
+                    <div class="gallery-overlay">
+                        <p>The day of your birthday party, I was soo happy all of our friends were there to celebrate your birthday</p>
+                    </div>
+                </div>
+                <div class="gallery-item" data-year="2024" data-index="6">
+                    <img src="pic/pic7.png" alt="Botanical Gardens" loading="lazy">
+                    <div class="gallery-overlay">
+                        <p>Trip to the Botanical Gardens, can't believe we had those organic drinks they tasted awful. The bee garden was my favorite</p>
+                    </div>
+                </div>
+                <div class="gallery-item" data-year="2024" data-index="7">
+                    <img src="pic/pic8.png" alt="Beautiful soldier" loading="lazy">
+                    <div class="gallery-overlay">
+                        <p>My beautiful soldier</p>
+                    </div>
+                </div>
+                <div class="gallery-item" data-year="2024" data-index="8">
+                    <img src="pic/pic9.png" alt="Fair" loading="lazy">
+                    <div class="gallery-overlay">
+                        <p>First time at the fair together, and trying the Idaho Potato WORTH IT</p>
+                    </div>
+                </div>
+                <div class="gallery-item" data-year="2024" data-index="9">
+                    <img src="pic/pic10.png" alt="Sunset" loading="lazy">
+                    <div class="gallery-overlay">
+                        <p>Sadly we missed the sunset, but your beauty shined an array of light</p>
+                    </div>
+                </div>
+                <div class="gallery-item" data-year="2024" data-index="10">
+                    <img src="pic/pic11.png" alt="Farmstead date" loading="lazy">
+                    <div class="gallery-overlay">
+                        <p>Farmstead date with a third wheel (JK!), sadly no good pulls from the rocks</p>
+                    </div>
+                </div>
+                <div class="gallery-item" data-year="2024" data-index="11">
+                    <img src="pic/pic12.png" alt="Picking flowers" loading="lazy">
+                    <div class="gallery-overlay">
+                        <p>Picking flowers for each other, and I'm so glad you and my sister bonded</p>
+                    </div>
+                </div>
+                <div class="gallery-item" data-year="2024" data-index="12">
+                    <img src="pic/pic13.png" alt="Pumpkin carving" loading="lazy">
+                    <div class="gallery-overlay">
+                        <p>We locked in and made the best pumpkins</p>
+                    </div>
+                </div>
+                <div class="gallery-item" data-year="2024" data-index="13">
+                    <img src="pic/pic14.png" alt="Special moment" loading="lazy">
+                    <div class="gallery-overlay">
+                        <p>Fine, a lil freaky</p>
+                    </div>
+                </div>
+                <div class="gallery-item" data-year="2025" data-index="14">
+                    <img src="pic/pic15.png" alt="Domain Expansion" loading="lazy">
+                    <div class="gallery-overlay">
+                        <p>Domain Expansion: Bagging a furry</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-			function toggleMute() {
-				music.muted = !music.muted;
-				muteBtn.textContent = music.muted ? 'Unmute' : 'Mute';
-			}
+    <!-- Lightbox -->
+    <div class="lightbox" id="lightbox">
+        <button class="lightbox-close" id="lightboxClose">&times;</button>
+        <button class="lightbox-nav lightbox-prev" id="lightboxPrev">&#10094;</button>
+        <button class="lightbox-nav lightbox-next" id="lightboxNext">&#10095;</button>
+        <div class="lightbox-content">
+            <img src="" alt="" id="lightboxImg">
+            <p class="lightbox-caption" id="lightboxCaption"></p>
+        </div>
+    </div>
 
-			document.addEventListener('click', function initAudio() {
-				if (!isPlaying) {
-					music.play().then(() => {
-						isPlaying = true;
-						playPauseBtn.textContent = 'Pause Music';
-					}).catch(error => {
-						console.log("Audio play failed:", error);
-					});
-				}
-				document.removeEventListener('click', initAudio);
-			}, { once: true });
+    <!-- Stats Section with Carousel -->
+    <section class="stats-section" id="stats">
+        <div class="container">
+            <header class="section-header">
+                <span class="section-tag">By The Numbers</span>
+                <h2 class="section-title">Our Love Stats</h2>
+                <p class="section-subtitle">Because every moment counts</p>
+            </header>
 
-			var ok = 0;
-			var flag = 1;
-			var myImage = document.getElementById("img");
-			var myTxt = document.getElementById("Txt");
-			var imageArray = ["pic/pic1.png", "pic/pic2.png", "pic/pic3.png", "pic/pic4.png", 
-							 "pic/pic5.png", "pic/pic6.png", "pic/pic7.png", "pic/pic8.png", 
-							 "pic/pic9.png", "pic/pic10.png", "pic/pic11.png", "pic/pic12.png", 
-							 "pic/pic13.png", "pic/pic14.png", "pic/pic15.png"];
-			var imageIndex = 0;
-			var txtArray = ["Our first anniversary dinner, we went to the aquarium then the melting pot. Loved every single moment being with my lover", "PIERCE THE VEIL!!", 
-						   "My first time flying, I'm glad I got to experience the moment with you :)", "You justed looked absolutely stunning, I had to add this photo", 
-						   "Our first escape room together, it stood no chance!", "The day of your birthday party, I was soo happy all of our friends were there to celebrate your birthday", 
-						   "Trip to the Botanical Gardens, can't believe we had those organic drinks they tasted awful. The bee garden was my favorite", 
-						   "My beautiful soldier", "First time at the fair together, and trying the Idaho Potatoe WORTH IT", 
-						   "Sadely we missed the sunset, but your beauty shined an array of light", "Farmstead date with a thrid wheel(JK!), sadley no good pulls from the rocks", 
-						   "Picking flowers for eachother, and I'm so glad you and my sister bonded", "We fucking locked in and made the best pumpkins", 
-						   "Fine shyte a lil freaky ", "Domain Expansion: Bagging a furry"];
-			var len = imageArray.length;
-			var t = 0;
+            <!-- Stats Carousel -->
+            <div class="stats-carousel">
+                <button class="carousel-arrow carousel-prev" id="statsPrev">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="15 18 9 12 15 6"></polyline>
+                    </svg>
+                </button>
 
-			// Preload images
-			function preloadImages() {
-				for (let i = 0; i < imageArray.length; i++) {
-					const img = new Image();
-					img.src = imageArray[i];
-				}
-			}
+                <div class="carousel-container" id="statsCarousel">
+                    <!-- Slide 1: Main Stats -->
+                    <div class="carousel-slide active" data-slide="0">
+                        <h3 class="slide-title">Time Together</h3>
+                        <div class="stats-grid">
+                            <div class="stat-card" data-count="757">
+                                <div class="stat-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                                    </svg>
+                                </div>
+                                <span class="stat-number" id="statDays">0</span>
+                                <span class="stat-label">Days Together</span>
+                            </div>
+                            <div class="stat-card" data-count="18168">
+                                <div class="stat-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <polyline points="12,6 12,12 16,14"></polyline>
+                                    </svg>
+                                </div>
+                                <span class="stat-number">0</span>
+                                <span class="stat-label">Hours of Love</span>
+                            </div>
+                            <div class="stat-card" data-count="50000">
+                                <div class="stat-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                                    </svg>
+                                </div>
+                                <span class="stat-number">0</span>
+                                <span class="stat-label">Messages Sent</span>
+                            </div>
+                            <div class="stat-card" data-count="150">
+                                <div class="stat-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                                    </svg>
+                                </div>
+                                <span class="stat-number">0</span>
+                                <span class="stat-label">Date Nights</span>
+                            </div>
+                            <div class="stat-card" data-count="500">
+                                <div class="stat-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="2" y="7" width="20" height="15" rx="2" ry="2"></rect>
+                                        <polyline points="17,2 12,7 7,2"></polyline>
+                                    </svg>
+                                </div>
+                                <span class="stat-number">0</span>
+                                <span class="stat-label">Movies & Shows</span>
+                            </div>
+                            <div class="stat-card" data-count="999999">
+                                <div class="stat-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <path d="M8 14s1.5 2 4 2 4-2 4-2"></path>
+                                        <line x1="9" y1="9" x2="9.01" y2="9"></line>
+                                        <line x1="15" y1="9" x2="15.01" y2="9"></line>
+                                    </svg>
+                                </div>
+                                <span class="stat-number">0</span>
+                                <span class="stat-label">Times You Made Me Laugh</span>
+                            </div>
+                        </div>
+                    </div>
 
-			window.onload = preloadImages;
-		</script>
+                    <!-- Slide 2: Who Picks Restaurant -->
+                    <div class="carousel-slide" data-slide="1">
+                        <h3 class="slide-title">Who Picks The Restaurant?</h3>
+                        <div class="chart-slide">
+                            <div class="pie-chart-large">
+                                <svg viewBox="0 0 200 200" class="pie-svg">
+                                    <circle cx="100" cy="100" r="80" fill="none" stroke="#d4af37" stroke-width="40" stroke-dasharray="150.8 502.65" stroke-dashoffset="0" class="pie-slice"></circle>
+                                    <circle cx="100" cy="100" r="80" fill="none" stroke="#c9184a" stroke-width="40" stroke-dasharray="201.06 502.65" stroke-dashoffset="-150.8" class="pie-slice"></circle>
+                                    <circle cx="100" cy="100" r="80" fill="none" stroke="#ff4d6d" stroke-width="40" stroke-dasharray="150.8 502.65" stroke-dashoffset="-351.86" class="pie-slice"></circle>
+                                </svg>
+                                <div class="pie-center">
+                                    <span class="pie-emoji">🍽️</span>
+                                </div>
+                            </div>
+                            <div class="pie-legend-large">
+                                <div class="legend-item-large">
+                                    <span class="legend-color-large hector"></span>
+                                    <div class="legend-info">
+                                        <span class="legend-name">Hector</span>
+                                        <span class="legend-percent">30%</span>
+                                    </div>
+                                </div>
+                                <div class="legend-item-large">
+                                    <span class="legend-color-large kaylee"></span>
+                                    <div class="legend-info">
+                                        <span class="legend-name">Kaylee</span>
+                                        <span class="legend-percent">40%</span>
+                                    </div>
+                                </div>
+                                <div class="legend-item-large">
+                                    <span class="legend-color-large both"></span>
+                                    <div class="legend-info">
+                                        <span class="legend-name">Both / "I don't care"</span>
+                                        <span class="legend-percent">30%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-		<script type="text/javascript" src="./js/typeWriter.js"></script>
-		<script type="text/javascript" src="./js/date.js"></script>
-		<script type="text/javascript" src="./js/stars.js"></script>
-		<script type="text/javascript" src="./js/playImg.js"></script>
-	</body>
+                    <!-- Slide 3: Anime Stats -->
+                    <div class="carousel-slide" data-slide="2">
+                        <h3 class="slide-title">Anime Watched Together</h3>
+                        <div class="chart-slide">
+                            <div class="bar-chart-large">
+                                <div class="bar-item-large">
+                                    <div class="bar-info">
+                                        <span class="bar-emoji">🌟</span>
+                                        <span class="bar-label-large">JoJo's Bizarre Adventure</span>
+                                    </div>
+                                    <div class="bar-track-large">
+                                        <div class="bar-fill-large" style="--width: 90%;"></div>
+                                    </div>
+                                    <span class="bar-value-large">5 parts</span>
+                                </div>
+                                <div class="bar-item-large">
+                                    <div class="bar-info">
+                                        <span class="bar-emoji">🔥</span>
+                                        <span class="bar-label-large">Chainsaw Man</span>
+                                    </div>
+                                    <div class="bar-track-large">
+                                        <div class="bar-fill-large" style="--width: 60%;"></div>
+                                    </div>
+                                    <span class="bar-value-large">12 eps</span>
+                                </div>
+                                <div class="bar-item-large">
+                                    <div class="bar-info">
+                                        <span class="bar-emoji">❄️</span>
+                                        <span class="bar-label-large">Golden Kamuy</span>
+                                    </div>
+                                    <div class="bar-track-large">
+                                        <div class="bar-fill-large" style="--width: 75%;"></div>
+                                    </div>
+                                    <span class="bar-value-large">4 seasons</span>
+                                </div>
+                                <div class="bar-item-large">
+                                    <div class="bar-info">
+                                        <span class="bar-emoji">🌹</span>
+                                        <span class="bar-label-large">Ouran High School</span>
+                                    </div>
+                                    <div class="bar-track-large">
+                                        <div class="bar-fill-large" style="--width: 50%;"></div>
+                                    </div>
+                                    <span class="bar-value-large">26 eps</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Slide 4: Gaming Stats -->
+                    <div class="carousel-slide" data-slide="3">
+                        <h3 class="slide-title">Gaming Together</h3>
+                        <div class="stats-grid">
+                            <div class="stat-card" data-count="200">
+                                <div class="stat-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="2" y="6" width="20" height="12" rx="2"></rect>
+                                        <circle cx="8" cy="12" r="2"></circle>
+                                        <circle cx="16" cy="12" r="2"></circle>
+                                    </svg>
+                                </div>
+                                <span class="stat-number">0</span>
+                                <span class="stat-label">Gaming Sessions</span>
+                            </div>
+                            <div class="stat-card" data-count="50">
+                                <div class="stat-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                                    </svg>
+                                </div>
+                                <span class="stat-number">0</span>
+                                <span class="stat-label">Games Played</span>
+                            </div>
+                            <div class="stat-card" data-count="999">
+                                <div class="stat-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4z"></path>
+                                        <path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path>
+                                    </svg>
+                                </div>
+                                <span class="stat-number">0</span>
+                                <span class="stat-label">Rage Quits (Kaylee)</span>
+                            </div>
+                            <div class="stat-card" data-count="1">
+                                <div class="stat-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4z"></path>
+                                        <path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path>
+                                    </svg>
+                                </div>
+                                <span class="stat-number">0</span>
+                                <span class="stat-label">Rage Quits (Hector)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Slide 5: Food Stats -->
+                    <div class="carousel-slide" data-slide="4">
+                        <h3 class="slide-title">Food Adventures</h3>
+                        <div class="stats-grid">
+                            <div class="stat-card" data-count="300">
+                                <div class="stat-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
+                                        <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path>
+                                        <line x1="6" y1="1" x2="6" y2="4"></line>
+                                        <line x1="10" y1="1" x2="10" y2="4"></line>
+                                        <line x1="14" y1="1" x2="14" y2="4"></line>
+                                    </svg>
+                                </div>
+                                <span class="stat-number">0</span>
+                                <span class="stat-label">Meals Together</span>
+                            </div>
+                            <div class="stat-card" data-count="75">
+                                <div class="stat-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                                        <path d="M2 17l10 5 10-5"></path>
+                                        <path d="M2 12l10 5 10-5"></path>
+                                    </svg>
+                                </div>
+                                <span class="stat-number">0</span>
+                                <span class="stat-label">Restaurants Tried</span>
+                            </div>
+                            <div class="stat-card" data-count="50">
+                                <div class="stat-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <path d="M8 12l2 2 4-4"></path>
+                                    </svg>
+                                </div>
+                                <span class="stat-number">0</span>
+                                <span class="stat-label">Home Cooked Meals</span>
+                            </div>
+                            <div class="stat-card" data-count="100">
+                                <div class="stat-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"></path>
+                                        <line x1="16" y1="8" x2="2" y2="22"></line>
+                                        <line x1="17.5" y1="15" x2="9" y2="15"></line>
+                                    </svg>
+                                </div>
+                                <span class="stat-number">0</span>
+                                <span class="stat-label">Pizza Nights</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="carousel-arrow carousel-next" id="statsNext">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Carousel Dots -->
+            <div class="carousel-dots" id="carouselDots">
+                <button class="carousel-dot active" data-slide="0"></button>
+                <button class="carousel-dot" data-slide="1"></button>
+                <button class="carousel-dot" data-slide="2"></button>
+                <button class="carousel-dot" data-slide="3"></button>
+                <button class="carousel-dot" data-slide="4"></button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Our Songs Section -->
+    <section class="music-section" id="music">
+        <div class="container">
+            <header class="section-header">
+                <span class="section-tag">Our Soundtrack</span>
+                <h2 class="section-title">Our Songs</h2>
+                <p class="section-subtitle">The music that tells our story</p>
+            </header>
+
+            <div class="songs-grid">
+                <a href="https://open.spotify.com/track/YOUR_SONG_1_ID" target="_blank" rel="noopener" class="song-card">
+                    <div class="song-artwork">
+                        <div class="song-placeholder">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="song-info">
+                        <span class="song-number">01</span>
+                        <h3 class="song-title">Add Your Song</h3>
+                        <p class="song-artist">Artist Name</p>
+                        <p class="song-memory">Why this song is special to us...</p>
+                    </div>
+                    <div class="song-play">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                        </svg>
+                    </div>
+                </a>
+
+                <a href="https://open.spotify.com/track/YOUR_SONG_2_ID" target="_blank" rel="noopener" class="song-card">
+                    <div class="song-artwork">
+                        <div class="song-placeholder">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="song-info">
+                        <span class="song-number">02</span>
+                        <h3 class="song-title">Add Your Song</h3>
+                        <p class="song-artist">Artist Name</p>
+                        <p class="song-memory">Why this song is special to us...</p>
+                    </div>
+                    <div class="song-play">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                        </svg>
+                    </div>
+                </a>
+
+                <a href="https://open.spotify.com/track/YOUR_SONG_3_ID" target="_blank" rel="noopener" class="song-card">
+                    <div class="song-artwork">
+                        <div class="song-placeholder">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="song-info">
+                        <span class="song-number">03</span>
+                        <h3 class="song-title">Add Your Song</h3>
+                        <p class="song-artist">Artist Name</p>
+                        <p class="song-memory">Why this song is special to us...</p>
+                    </div>
+                    <div class="song-play">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                        </svg>
+                    </div>
+                </a>
+            </div>
+
+            <p class="songs-note">Click any song to listen on Spotify</p>
+        </div>
+    </section>
+
+    <!-- Photo Upload Section -->
+    <section class="upload-section" id="upload">
+        <div class="container">
+            <header class="section-header">
+                <span class="section-tag">Add Memories</span>
+                <h2 class="section-title">Upload Photos</h2>
+                <p class="section-subtitle">Add new photos to our collection</p>
+            </header>
+
+            <div class="upload-tabs">
+                <button class="upload-tab active" data-year="2022">2022</button>
+                <button class="upload-tab" data-year="2023">2023</button>
+                <button class="upload-tab" data-year="2024">2024</button>
+                <button class="upload-tab" data-year="2025">2025</button>
+            </div>
+
+            <div class="upload-area" id="uploadArea">
+                <div class="upload-dropzone" id="dropzone">
+                    <div class="dropzone-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="17 8 12 3 7 8"></polyline>
+                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                        </svg>
+                    </div>
+                    <h3 class="dropzone-title">Drag & Drop Photos Here</h3>
+                    <p class="dropzone-text">or click to browse</p>
+                    <input type="file" id="fileInput" accept="image/*" multiple hidden>
+                    <button class="dropzone-btn" id="browseBtn">Browse Files</button>
+                </div>
+
+                <div class="upload-preview" id="uploadPreview">
+                    <h4 class="preview-title">Selected Photos <span id="photoCount">(0)</span></h4>
+                    <div class="preview-grid" id="previewGrid"></div>
+                    <div class="preview-actions">
+                        <button class="preview-btn secondary" id="clearPhotos">Clear All</button>
+                        <button class="preview-btn primary" id="addToGallery">Add to Gallery</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="upload-note">
+                <p>Photos are stored locally in your browser. To permanently add them, save the images to the <code>pic/</code> folder.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Favorites Section -->
+    <section class="favorites-section" id="favorites">
+        <div class="container">
+            <header class="section-header">
+                <span class="section-tag">What She Loves</span>
+                <h2 class="section-title">Kaylee's Favorites</h2>
+                <p class="section-subtitle">A guide to her world</p>
+            </header>
+
+            <div class="favorites-grid">
+                <div class="favorite-card">
+                    <div class="favorite-icon">
+                        <span class="emoji-icon">🐒</span>
+                    </div>
+                    <h3 class="favorite-title">Monkeys</h3>
+                    <p class="favorite-text">Her spirit animal and the reason there's a monkey mascot on this site. Cute, playful, and always bringing joy!</p>
+                </div>
+                <div class="favorite-card">
+                    <div class="favorite-icon">
+                        <span class="emoji-icon">🌟</span>
+                    </div>
+                    <h3 class="favorite-title">JoJo's Bizarre Adventure</h3>
+                    <p class="favorite-text">Stand proud! Her favorite anime that we've binged together through every part. Bizarre, fabulous, and unforgettable.</p>
+                </div>
+                <div class="favorite-card">
+                    <div class="favorite-icon">
+                        <span class="emoji-icon">🔥</span>
+                    </div>
+                    <h3 class="favorite-title">Chainsaw Man</h3>
+                    <p class="favorite-text">Dark, action-packed, and absolutely wild. We couldn't look away from Denji's chaotic journey.</p>
+                </div>
+                <div class="favorite-card">
+                    <div class="favorite-icon">
+                        <span class="emoji-icon">❄️</span>
+                    </div>
+                    <h3 class="favorite-title">Golden Kamuy</h3>
+                    <p class="favorite-text">Adventure, history, and... interesting cuisine. This one kept us on the edge of our seats.</p>
+                </div>
+                <div class="favorite-card">
+                    <div class="favorite-icon">
+                        <span class="emoji-icon">🌹</span>
+                    </div>
+                    <h3 class="favorite-title">Ouran High School</h3>
+                    <p class="favorite-text">Kiss kiss fall in love! The perfect blend of comedy and romance that never gets old.</p>
+                </div>
+                <div class="favorite-card">
+                    <div class="favorite-icon">
+                        <span class="emoji-icon">🖤</span>
+                    </div>
+                    <h3 class="favorite-title">Gothic Aesthetic</h3>
+                    <p class="favorite-text">Dark romantic vibes, elegant and mysterious. Victorian elegance meets modern edge.</p>
+                </div>
+                <div class="favorite-card">
+                    <div class="favorite-icon">
+                        <span class="emoji-icon">💎</span>
+                    </div>
+                    <h3 class="favorite-title">Jewelry</h3>
+                    <p class="favorite-text">Elegant pieces that catch the light. From delicate chains to statement pieces, she wears them all beautifully.</p>
+                </div>
+                <div class="favorite-card">
+                    <div class="favorite-icon">
+                        <span class="emoji-icon">🎸</span>
+                    </div>
+                    <h3 class="favorite-title">Pierce The Veil</h3>
+                    <p class="favorite-text">The concert we'll never forget! Her music taste is impeccable and our playlists are forever intertwined.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-content">
+                <h2 class="footer-title">Hector & Kaylee</h2>
+                <p class="footer-subtitle">Forever & Always</p>
+                <div class="footer-heart">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                    </svg>
+                </div>
+                <p class="footer-date">Since November 27, 2022</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Monkey Mascot -->
+    <div class="monkey-mascot" id="monkeyMascot">
+        <div class="monkey-bubble" id="monkeyBubble">
+            <button class="monkey-close" id="monkeyClose">&times;</button>
+            <p id="monkeyMessage">Welcome to Hector & Kaylee's love story!</p>
+        </div>
+        <button class="monkey-icon" id="monkeyIcon">
+            🐒
+        </button>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/main.js"></script>
+</body>
 </html>
