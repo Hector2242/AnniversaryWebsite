@@ -24,22 +24,22 @@ const CONFIG = {
         colors: ['#ff6b6b', '#ff8787', '#ffa8a8', '#ffc9c9', '#ffe3e3', '#d4af37']
     },
     monkeyFacts: [
-        "Welcome to Hector & Kaylee's love story!",
-        "It all started with 'HEYYY QUEEEN' on Snapchat!",
-        "Their first date? The aquarium! He was late, obviously.",
-        "He stabbed sushi like it owed him money. She noticed.",
-        "First kiss was behind a Domino's after dancing to 'Let's Groove'!",
-        "He made vegan pizza with the worst cheese ever. She still said yes!",
-        "Their love story started November 27, 2022!",
-        "JoJo's Part 5 is peak! Mista and Jotaro vs Abbacchio and Gyro!",
-        "6 Fortnite duo wins together! Zero build because they're employed.",
-        "Pierce The Veil concert was LEGENDARY!",
-        "They've been to Utah, Oklahoma, Puerto Vallarta, and Belize!",
-        "Her Honda Civic had glowing skull lights and JoJo stickers!",
-        "He went for a handshake on the first date. She hugged him instead!",
-        "Kaylee's Monster High collection is goals!",
-        "Ouran High School? She's rewatched it double digits, probably!",
-        "Monkeys are Kaylee's spirit animal!"
+        "Ooh ooh! Welcome! I'm the official mascot around here.",
+        "'HEYYY QUEEEN' - that's how legends begin, apparently.",
+        "He showed up late to their first date. Bold move, king.",
+        "Watching him fight sushi with chopsticks was peak entertainment.",
+        "First kiss behind a Domino's? Romance isn't dead, folks!",
+        "That vegan cheese was... questionable. She said yes anyway.",
+        "November 27, 2022 - best decision she ever made, just saying.",
+        "Don't get them started on JoJo's. You WILL be here for hours.",
+        "6 Fortnite duo wins! They'd have more but... responsibilities.",
+        "They still won't shut up about Pierce The Veil. Fair enough.",
+        "4 trips together and I'm just stuck on this website. Cool cool.",
+        "Her car has skull lights and anime stickers. Absolute queen.",
+        "He tried to HANDSHAKE her after date one. Bless his heart.",
+        "Her Monster High collection is worth more than my existence.",
+        "She's rewatched Ouran so many times I lost count. Respect.",
+        "Why am I the mascot? Monkeys are her favorite. Obviously."
     ]
 };
 
