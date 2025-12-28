@@ -25,15 +25,21 @@ const CONFIG = {
     },
     monkeyFacts: [
         "Welcome to Hector & Kaylee's love story!",
-        "Fun fact: They've been together for over 750 days!",
-        "Kaylee's favorite anime? JoJo's, obviously!",
-        "They survived their first escape room together!",
+        "It all started with 'HEYYY QUEEEN' on Snapchat!",
+        "Their first date? The aquarium! He was late, obviously.",
+        "He stabbed sushi like it owed him money. She noticed.",
+        "First kiss was behind a Domino's after dancing to 'Let's Groove'!",
+        "He made vegan pizza with the worst cheese ever. She still said yes!",
+        "Their love story started November 27, 2022!",
+        "JoJo's Part 5 is peak! Mista and Jotaro vs Abbacchio and Gyro!",
+        "6 Fortnite duo wins together! Zero build because they're employed.",
         "Pierce The Veil concert was LEGENDARY!",
-        "The Idaho Potato at the fair was 100% worth it!",
-        "Those organic drinks at the gardens? Never again!",
-        "Monkeys are Kaylee's spirit animal!",
-        "Their love story started November 27, 2022",
-        "They've watched JoJo's through ALL the parts!"
+        "They've been to Utah, Oklahoma, Puerto Vallarta, and Belize!",
+        "Her Honda Civic had glowing skull lights and JoJo stickers!",
+        "He went for a handshake on the first date. She hugged him instead!",
+        "Kaylee's Monster High collection is goals!",
+        "Ouran High School? She's rewatched it double digits, probably!",
+        "Monkeys are Kaylee's spirit animal!"
     ]
 };
 
@@ -360,7 +366,9 @@ class Gallery {
             btn.classList.toggle('active', btn.dataset.filter === year);
         });
 
-        this.items.forEach(item => {
+        // Re-query all gallery items to include dynamically added photos
+        const allItems = $$('.gallery-item');
+        allItems.forEach(item => {
             if (year === 'all' || item.dataset.year === year) {
                 item.classList.remove('hidden');
                 setTimeout(() => item.classList.add('visible'), 10);
@@ -374,7 +382,9 @@ class Gallery {
     }
 
     updateVisibleItems() {
-        this.visibleItems = Array.from(this.items).filter(item => !item.classList.contains('hidden'));
+        // Re-query all gallery items to include dynamically added photos
+        const allItems = $$('.gallery-item');
+        this.visibleItems = Array.from(allItems).filter(item => !item.classList.contains('hidden'));
     }
 
     openLightbox(index) {
@@ -698,8 +708,17 @@ class StatsCarousel {
         const currentSlide = this.slides[this.currentSlide];
         const nextSlide = this.slides[index];
 
-        currentSlide.classList.remove('active');
-        currentSlide.classList.add(direction === 'next' ? 'prev' : '');
+        // Remove all transition classes first
+        this.slides.forEach(slide => {
+            slide.classList.remove('active', 'prev', 'next');
+        });
+
+        // Add appropriate classes for transition
+        if (direction === 'next') {
+            currentSlide.classList.add('prev');
+        } else {
+            currentSlide.classList.add('next');
+        }
         nextSlide.classList.add('active');
 
         this.dots[this.currentSlide].classList.remove('active');
@@ -709,7 +728,7 @@ class StatsCarousel {
         this.animateBars();
 
         setTimeout(() => {
-            currentSlide.classList.remove('prev');
+            currentSlide.classList.remove('prev', 'next');
             this.isAnimating = false;
         }, 500);
     }
@@ -742,9 +761,11 @@ class PhotoUpload {
 
         this.selectedYear = '2022';
         this.photos = [];
+        this.files = []; // Store actual file objects for upload
 
         if (this.dropzone) {
             this.init();
+            this.loadPersistedPhotos();
         }
     }
 
@@ -787,12 +808,89 @@ class PhotoUpload {
 
         this.clearBtn.addEventListener('click', () => {
             this.photos = [];
+            this.files = [];
             this.updatePreview();
         });
 
         this.addBtn.addEventListener('click', () => {
             this.addToGallery();
         });
+    }
+
+    // Load persisted photos from server on page load
+    async loadPersistedPhotos() {
+        try {
+            const response = await fetch('/api/photos');
+            const photos = await response.json();
+
+            const galleryGrid = $('#galleryGrid');
+
+            photos.forEach((photo) => {
+                this.addPhotoToGalleryDOM(galleryGrid, photo);
+            });
+        } catch (error) {
+            console.log('Could not load persisted photos:', error);
+        }
+    }
+
+    // Add a photo element to the gallery DOM
+    addPhotoToGalleryDOM(galleryGrid, photo) {
+        const item = document.createElement('div');
+        item.className = 'gallery-item visible uploaded-photo';
+        item.dataset.year = photo.year;
+        item.dataset.photoId = photo.id;
+
+        const caption = photo.caption || 'A beautiful memory';
+        item.innerHTML =
+            '<img src="' + photo.src + '" alt="' + caption + '" loading="lazy">' +
+            '<div class="gallery-overlay"><p>' + caption + '</p></div>' +
+            '<button class="gallery-delete-btn" title="Delete photo">&times;</button>';
+
+        galleryGrid.appendChild(item);
+
+        // Click to open lightbox
+        item.addEventListener('click', (e) => {
+            if (e.target.classList.contains('gallery-delete-btn')) return;
+
+            const lightbox = $('#lightbox');
+            const lightboxImg = $('#lightboxImg');
+            const lightboxCaption = $('#lightboxCaption');
+
+            lightboxImg.src = photo.src;
+            lightboxCaption.textContent = caption;
+            lightbox.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+
+        // Delete button handler
+        const deleteBtn = item.querySelector('.gallery-delete-btn');
+        deleteBtn.addEventListener('click', async (e) => {
+            e.stopPropagation();
+            if (confirm('Are you sure you want to delete this photo?')) {
+                await this.deletePhoto(photo.id, item);
+            }
+        });
+    }
+
+    // Delete a photo from server and DOM
+    async deletePhoto(photoId, element) {
+        try {
+            const response = await fetch('/api/photos/' + photoId, {
+                method: 'DELETE'
+            });
+
+            if (response.ok) {
+                element.classList.add('deleting');
+                setTimeout(() => {
+                    element.remove();
+                }, 300);
+            } else {
+                alert('Failed to delete photo');
+            }
+        } catch (error) {
+            console.error('Error deleting photo:', error);
+            alert('Error deleting photo');
+        }
     }
 
     handleFiles(files) {
@@ -806,6 +904,7 @@ class PhotoUpload {
                         year: this.selectedYear,
                         caption: ''
                     });
+                    this.files.push(file);
                     this.updatePreview();
                 };
                 reader.readAsDataURL(file);
@@ -838,6 +937,7 @@ class PhotoUpload {
                 e.stopPropagation();
                 const index = parseInt(btn.dataset.index);
                 this.photos.splice(index, 1);
+                this.files.splice(index, 1);
                 this.updatePreview();
             });
         });
@@ -850,38 +950,552 @@ class PhotoUpload {
         });
     }
 
-    addToGallery() {
+    async addToGallery() {
         if (this.photos.length === 0) return;
 
         const galleryGrid = $('#galleryGrid');
         const count = this.photos.length;
 
-        this.photos.forEach((photo) => {
-            const item = document.createElement('div');
-            item.className = 'gallery-item visible';
-            item.dataset.year = photo.year;
+        // Prepare FormData for upload
+        const formData = new FormData();
+        const metadata = [];
 
-            const caption = photo.caption || 'A beautiful memory';
-            item.innerHTML = '<img src="' + photo.src + '" alt="' + caption + '">' +
-                '<div class="gallery-overlay"><p>' + caption + '</p></div>';
-
-            galleryGrid.appendChild(item);
-
-            item.addEventListener('click', () => {
-                const lightbox = $('#lightbox');
-                const lightboxImg = $('#lightboxImg');
-                const lightboxCaption = $('#lightboxCaption');
-
-                lightboxImg.src = photo.src;
-                lightboxCaption.textContent = caption;
-                lightbox.classList.add('active');
+        this.files.forEach((file, index) => {
+            formData.append('photos', file);
+            metadata.push({
+                year: this.photos[index].year,
+                caption: this.photos[index].caption
             });
         });
 
-        this.photos = [];
-        this.updatePreview();
+        formData.append('metadata', JSON.stringify(metadata));
 
-        alert(count + ' photo(s) added to gallery!');
+        try {
+            const response = await fetch('/api/photos', {
+                method: 'POST',
+                body: formData
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                // Add photos to gallery with server-assigned IDs
+                result.photos.forEach((photo) => {
+                    this.addPhotoToGalleryDOM(galleryGrid, photo);
+                });
+
+                this.photos = [];
+                this.files = [];
+                this.updatePreview();
+
+                alert(count + ' photo(s) added to gallery and saved!');
+            } else {
+                alert('Error saving photos: ' + result.error);
+            }
+        } catch (error) {
+            console.error('Error uploading photos:', error);
+            alert('Error uploading photos. Make sure the server is running.');
+        }
+    }
+}
+
+// ==========================================================================
+// Notes Manager
+// ==========================================================================
+
+class NotesManager {
+    constructor() {
+        this.notesGrid = $('#notesGrid');
+        this.notesEmpty = $('#notesEmpty');
+        this.noteModal = $('#noteModal');
+        this.noteForm = $('#noteForm');
+        this.filters = $$('.note-filter');
+        this.addBtn = $('#addNoteBtn');
+        this.currentFilter = 'all';
+        this.notes = [];
+
+        if (this.notesGrid) {
+            this.init();
+        }
+    }
+
+    init() {
+        this.loadNotes();
+
+        // Filter buttons
+        this.filters.forEach(btn => {
+            btn.addEventListener('click', () => {
+                this.filters.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                this.currentFilter = btn.dataset.filter;
+                this.renderNotes();
+            });
+        });
+
+        // Add note button
+        this.addBtn.addEventListener('click', () => this.openModal());
+
+        // Modal close
+        $('#noteModalClose').addEventListener('click', () => this.closeModal());
+        this.noteModal.addEventListener('click', (e) => {
+            if (e.target === this.noteModal) this.closeModal();
+        });
+
+        // Form submit
+        this.noteForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            this.saveNote();
+        });
+    }
+
+    async loadNotes() {
+        try {
+            const response = await fetch('/api/notes');
+            this.notes = await response.json();
+            this.renderNotes();
+        } catch (error) {
+            console.log('Could not load notes:', error);
+        }
+    }
+
+    renderNotes() {
+        const filteredNotes = this.currentFilter === 'all'
+            ? this.notes
+            : this.notes.filter(n => n.tag === this.currentFilter);
+
+        if (filteredNotes.length === 0) {
+            this.notesGrid.innerHTML = '';
+            this.notesEmpty.style.display = 'block';
+            return;
+        }
+
+        this.notesEmpty.style.display = 'none';
+        this.notesGrid.innerHTML = filteredNotes.map(note => this.createNoteCard(note)).join('');
+
+        // Add event listeners
+        this.notesGrid.querySelectorAll('.note-action-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const action = btn.dataset.action;
+                const noteId = btn.closest('.note-card').dataset.id;
+                this.handleAction(action, noteId);
+            });
+        });
+    }
+
+    createNoteCard(note) {
+        const age = this.getNoteAge(note.createdAt);
+        const date = new Date(note.createdAt).toLocaleDateString('en-US', {
+            month: 'short', day: 'numeric'
+        });
+
+        return `
+            <div class="note-card ${note.pinned ? 'pinned' : ''}" data-id="${note.id}" data-age="${age}">
+                <span class="note-tag ${note.tag}">${note.tag}</span>
+                <p class="note-content">${this.escapeHtml(note.content)}</p>
+                <div class="note-meta">
+                    <span class="note-date">${date}</span>
+                    <div class="note-actions">
+                        <button class="note-action-btn" data-action="pin" title="${note.pinned ? 'Unpin' : 'Pin'}">
+                            ${note.pinned ? '📌' : '📍'}
+                        </button>
+                        <button class="note-action-btn" data-action="archive" title="Archive">📦</button>
+                        <button class="note-action-btn" data-action="delete" title="Delete">🗑️</button>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    getNoteAge(createdAt) {
+        const days = (Date.now() - new Date(createdAt)) / (1000 * 60 * 60 * 24);
+        if (days > 30) return 'older';
+        if (days > 14) return 'old';
+        return '';
+    }
+
+    escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    openModal() {
+        this.noteModal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    closeModal() {
+        this.noteModal.classList.remove('active');
+        document.body.style.overflow = '';
+        this.noteForm.reset();
+    }
+
+    async saveNote() {
+        const content = $('#noteContent').value.trim();
+        const tag = document.querySelector('input[name="noteTag"]:checked').value;
+        const pinned = $('#notePinned').checked;
+
+        if (!content) return;
+
+        try {
+            const response = await fetch('/api/notes', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ content, tag, pinned })
+            });
+
+            const result = await response.json();
+            if (result.success) {
+                this.notes.unshift(result.note);
+                if (pinned) {
+                    this.notes.sort((a, b) => {
+                        if (a.pinned && !b.pinned) return -1;
+                        if (!a.pinned && b.pinned) return 1;
+                        return 0;
+                    });
+                }
+                this.renderNotes();
+                this.closeModal();
+            }
+        } catch (error) {
+            console.error('Error saving note:', error);
+            alert('Error saving note');
+        }
+    }
+
+    async handleAction(action, noteId) {
+        const note = this.notes.find(n => n.id === noteId);
+        if (!note) return;
+
+        if (action === 'delete') {
+            if (!confirm('Delete this note?')) return;
+            try {
+                await fetch('/api/notes/' + noteId, { method: 'DELETE' });
+                this.notes = this.notes.filter(n => n.id !== noteId);
+                this.renderNotes();
+            } catch (error) {
+                console.error('Error deleting note:', error);
+            }
+        } else if (action === 'pin') {
+            try {
+                await fetch('/api/notes/' + noteId, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ pinned: !note.pinned })
+                });
+                note.pinned = !note.pinned;
+                this.notes.sort((a, b) => {
+                    if (a.pinned && !b.pinned) return -1;
+                    if (!a.pinned && b.pinned) return 1;
+                    return 0;
+                });
+                this.renderNotes();
+            } catch (error) {
+                console.error('Error updating note:', error);
+            }
+        } else if (action === 'archive') {
+            try {
+                await fetch('/api/notes/' + noteId, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ archived: true })
+                });
+                this.notes = this.notes.filter(n => n.id !== noteId);
+                this.renderNotes();
+            } catch (error) {
+                console.error('Error archiving note:', error);
+            }
+        }
+    }
+}
+
+// ==========================================================================
+// Letters Manager
+// ==========================================================================
+
+class LettersManager {
+    constructor() {
+        this.lettersGrid = $('#lettersGrid');
+        this.lettersEmpty = $('#lettersEmpty');
+        this.letterModal = $('#letterModal');
+        this.letterForm = $('#letterForm');
+        this.keepsakeModal = $('#keepsakeModal');
+        this.addBtn = $('#addLetterBtn');
+        this.keepsakeBtn = $('#keepsakeBtn');
+        this.letters = [];
+        this.currentKeepsakeIndex = 0;
+
+        if (this.lettersGrid) {
+            this.init();
+        }
+    }
+
+    init() {
+        this.loadLetters();
+
+        // Add letter button
+        this.addBtn.addEventListener('click', () => this.openModal());
+
+        // Keepsake mode button
+        this.keepsakeBtn.addEventListener('click', () => this.openKeepsakeMode());
+
+        // Modal close
+        $('#letterModalClose').addEventListener('click', () => this.closeModal());
+        this.letterModal.addEventListener('click', (e) => {
+            if (e.target === this.letterModal) this.closeModal();
+        });
+
+        // Keepsake modal close
+        $('#keepsakeClose').addEventListener('click', () => this.closeKeepsakeMode());
+
+        // Keepsake navigation
+        $('#keepsakePrev').addEventListener('click', () => this.navigateKeepsake(-1));
+        $('#keepsakeNext').addEventListener('click', () => this.navigateKeepsake(1));
+
+        // Format toggle
+        document.querySelectorAll('input[name="letterFormat"]').forEach(radio => {
+            radio.addEventListener('change', () => this.toggleFormat());
+        });
+
+        // Image preview
+        $('#letterImage').addEventListener('change', (e) => this.previewImage(e));
+
+        // Form submit
+        this.letterForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            this.saveLetter();
+        });
+
+        // Keyboard navigation for keepsake mode
+        document.addEventListener('keydown', (e) => {
+            if (!this.keepsakeModal.classList.contains('active')) return;
+            if (e.key === 'Escape') this.closeKeepsakeMode();
+            if (e.key === 'ArrowLeft') this.navigateKeepsake(-1);
+            if (e.key === 'ArrowRight') this.navigateKeepsake(1);
+        });
+    }
+
+    async loadLetters() {
+        try {
+            const response = await fetch('/api/letters');
+            this.letters = await response.json();
+            this.renderLetters();
+        } catch (error) {
+            console.log('Could not load letters:', error);
+        }
+    }
+
+    renderLetters() {
+        if (this.letters.length === 0) {
+            this.lettersGrid.innerHTML = '';
+            this.lettersEmpty.style.display = 'block';
+            this.keepsakeBtn.style.display = 'none';
+            return;
+        }
+
+        this.lettersEmpty.style.display = 'none';
+        this.keepsakeBtn.style.display = 'flex';
+        this.lettersGrid.innerHTML = this.letters.map(letter => this.createLetterCard(letter)).join('');
+
+        // Add click listeners
+        this.lettersGrid.querySelectorAll('.letter-card').forEach((card, index) => {
+            card.addEventListener('click', () => this.viewLetter(index));
+        });
+    }
+
+    createLetterCard(letter) {
+        const isLocked = letter.readWhen ? true : false;
+        const dateDisplay = letter.dateWritten
+            ? new Date(letter.dateWritten).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
+            : '';
+        const preview = letter.format === 'text'
+            ? (letter.content || '').substring(0, 100) + '...'
+            : '[Image/Scan]';
+
+        return `
+            <div class="letter-card ${isLocked ? 'locked' : ''}" data-id="${letter.id}">
+                <div class="letter-envelope"></div>
+                <h4 class="letter-title">${this.escapeHtml(letter.title)}</h4>
+                <p class="letter-preview">${this.escapeHtml(preview)}</p>
+                <div class="letter-meta">
+                    ${dateDisplay ? `<span class="letter-date">${dateDisplay}</span>` : ''}
+                    ${letter.feeling ? `<span class="letter-feeling">${this.escapeHtml(letter.feeling)}</span>` : ''}
+                </div>
+            </div>
+        `;
+    }
+
+    escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    toggleFormat() {
+        const format = document.querySelector('input[name="letterFormat"]:checked').value;
+        $('#letterTextGroup').style.display = format === 'text' ? 'block' : 'none';
+        $('#letterImageGroup').style.display = format === 'image' ? 'block' : 'none';
+    }
+
+    previewImage(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                $('#letterImagePreview').innerHTML = `<img src="${ev.target.result}" alt="Preview">`;
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+
+    openModal() {
+        this.letterModal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    closeModal() {
+        this.letterModal.classList.remove('active');
+        document.body.style.overflow = '';
+        this.letterForm.reset();
+        $('#letterImagePreview').innerHTML = '';
+        this.toggleFormat();
+    }
+
+    async saveLetter() {
+        const title = $('#letterTitle').value.trim();
+        const format = document.querySelector('input[name="letterFormat"]:checked').value;
+        const dateWritten = $('#letterDate').value;
+        const feeling = $('#letterFeeling').value.trim();
+        const readWhen = $('#letterReadWhen').value;
+
+        if (!title) return;
+
+        try {
+            let response;
+
+            if (format === 'text') {
+                const content = $('#letterContent').value.trim();
+                response = await fetch('/api/letters', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ title, content, dateWritten, feeling, readWhen })
+                });
+            } else {
+                const imageFile = $('#letterImage').files[0];
+                if (!imageFile) {
+                    alert('Please select an image');
+                    return;
+                }
+                const formData = new FormData();
+                formData.append('image', imageFile);
+                formData.append('title', title);
+                formData.append('dateWritten', dateWritten);
+                formData.append('feeling', feeling);
+                formData.append('readWhen', readWhen);
+
+                response = await fetch('/api/letters/image', {
+                    method: 'POST',
+                    body: formData
+                });
+            }
+
+            const result = await response.json();
+            if (result.success) {
+                this.letters.unshift(result.letter);
+                this.renderLetters();
+                this.closeModal();
+            }
+        } catch (error) {
+            console.error('Error saving letter:', error);
+            alert('Error saving letter');
+        }
+    }
+
+    viewLetter(index) {
+        const letter = this.letters[index];
+        if (!letter) return;
+
+        this.currentKeepsakeIndex = index;
+        this.showLetterInKeepsake(letter);
+        this.keepsakeModal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    openKeepsakeMode() {
+        if (this.letters.length === 0) return;
+        this.currentKeepsakeIndex = 0;
+        this.showLetterInKeepsake(this.letters[0]);
+        this.keepsakeModal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    closeKeepsakeMode() {
+        this.keepsakeModal.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    showLetterInKeepsake(letter) {
+        const content = $('#keepsakeLetterContent');
+        const counter = $('#keepsakeCounter');
+
+        counter.textContent = `${this.currentKeepsakeIndex + 1} / ${this.letters.length}`;
+
+        // Check if locked
+        if (letter.readWhen) {
+            const lockMessages = {
+                miss: 'This letter is for when you miss her',
+                unsure: 'This letter is for when you feel unsure',
+                happy: 'This letter is for when you\'re happy',
+                sad: 'This letter is for when you need comfort'
+            };
+
+            content.innerHTML = `
+                <div class="lock-screen">
+                    <div class="lock-icon">🔐</div>
+                    <p class="lock-message">${lockMessages[letter.readWhen] || 'This letter is locked'}</p>
+                    <button class="unlock-btn" onclick="window.lettersManager.unlockLetter('${letter.id}')">
+                        I'm ready to read this
+                    </button>
+                </div>
+            `;
+            return;
+        }
+
+        this.displayLetterContent(letter, content);
+    }
+
+    displayLetterContent(letter, container) {
+        if (letter.format === 'image') {
+            container.innerHTML = `
+                <h3 class="letter-title">${this.escapeHtml(letter.title)}</h3>
+                <img class="letter-image" src="${letter.imageSrc}" alt="${this.escapeHtml(letter.title)}">
+                ${letter.feeling ? `<p class="letter-feeling-display">This made me feel: ${this.escapeHtml(letter.feeling)}</p>` : ''}
+            `;
+        } else {
+            container.innerHTML = `
+                <h3 class="letter-title">${this.escapeHtml(letter.title)}</h3>
+                <div class="letter-body">${this.escapeHtml(letter.content)}</div>
+                ${letter.feeling ? `<p class="letter-feeling-display">This made me feel: ${this.escapeHtml(letter.feeling)}</p>` : ''}
+            `;
+        }
+    }
+
+    unlockLetter(letterId) {
+        const letter = this.letters.find(l => l.id === letterId);
+        if (letter) {
+            // Temporarily remove the lock for viewing
+            const tempLetter = { ...letter, readWhen: '' };
+            this.displayLetterContent(tempLetter, $('#keepsakeLetterContent'));
+        }
+    }
+
+    navigateKeepsake(direction) {
+        let newIndex = this.currentKeepsakeIndex + direction;
+        if (newIndex < 0) newIndex = this.letters.length - 1;
+        if (newIndex >= this.letters.length) newIndex = 0;
+
+        this.currentKeepsakeIndex = newIndex;
+        this.showLetterInKeepsake(this.letters[newIndex]);
     }
 }
 
@@ -919,6 +1533,8 @@ document.addEventListener('DOMContentLoaded', () => {
     new MusicPlayer();
     new StatsCarousel();
     new PhotoUpload();
+    new NotesManager();
+    window.lettersManager = new LettersManager();
 
     // Wedding mode
     initWeddingMode();
